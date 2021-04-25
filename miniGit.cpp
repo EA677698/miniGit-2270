@@ -62,15 +62,15 @@ void miniGit::remove_file() // Aria workin on
     cout << "Enter the name for the soon to be removed file" << endl; //Prompt user to enter a file name.
     cin >> file;
 
-    while(ches -> head != NULL)
+    while(temp != NULL)
     {
         if(temp -> fileName == file) //Check the SLL for whether the file exists in the current version of the repository.
         {
-            ches -> head = temp -> next;
-            delete temp; // // If found, delete the SLL node
-            temp = ches -> head;
+                temp = temp->next;
+                free(temp);
         }
-        delete ches;
+        free(temp->next);
+        temp->next = next;
     }
 }
 
