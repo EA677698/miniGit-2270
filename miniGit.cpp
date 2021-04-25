@@ -12,6 +12,7 @@ miniGit::miniGit() {
     fs::create_directory(".minigit");
 }
 
+//TODO: destroy all nodes so that there are no memory leaks
 miniGit::~miniGit() {
 
 }
@@ -27,6 +28,7 @@ void miniGit::commit() {
 
 }
 
+//TODO: check to see if a file has changed to update file version number
 int miniGit::add_file(string fileName) {
     if(!fs::exists(fileName)){
         return -1;
@@ -48,6 +50,7 @@ int miniGit::add_file(string fileName) {
         file->fileVersion = "00";
     }
     file->fileName = fileName+file->fileVersion;
+    copy_file(fileName, file->fileName);
 }
 
 void miniGit::remove_file() {
@@ -69,6 +72,22 @@ miniGit::doublyNode* miniGit::get_current_commit() {
     return commit;
 }
 
-void miniGit::copy_file(string fileName) {
+void miniGit::copy_file(string originalName, string copyName) {
+    ofstream copy(".minigit\\"+copyName);
+    if(!copy){
+        cout<<"Failed to open file."<<endl;
+        return;
+    }
+    ifstream original(originalName);
+    if(!original){
+        cout<<"Failed to open file."<<endl;
+        return;
+    }
+    string line;
+    while(getline(original,line)){
+        copy << line;
+    }
+    copy.close();
+    original.close();
 }
 
