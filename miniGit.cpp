@@ -6,6 +6,21 @@
 #include <fstream>
 #include "main.cpp"
 
+bool isFileUpdated(string previousFile, string newFile){
+    string temp1,temp2;
+    ifstream original(previousFile);
+    ifstream newVersion(newFile);
+    if(!original||!newVersion){
+        return false;
+    }
+    while(getline(newVersion,temp2)&&getline(original,temp1)){
+        if(temp1!=temp2){
+            return true;
+        }
+    }
+    return false;
+}
+
 miniGit::miniGit() {
     head = nullptr;
     fs::remove_all(".minigit");
@@ -30,27 +45,42 @@ void miniGit::commit() {
 
 //TODO: check to see if a file has changed to update file version number
 int miniGit::add_file(string fileName) {
-    if(!fs::exists(fileName)){
+    if(!fs::exists(fileName)){ //Checks to see if the file exists
         return -1;
     }
     doublyNode *commit = get_current_commit();
     singlyNode *file = commit->head;
-    if(file->fileName==fileName){
+    if(file->fileName==fileName){ //Checks the head's name
         return -2;
     }
-    while(file->next!= nullptr){
+    while(file->next!= nullptr){ //Checks all other names in the list
         if(file->next->fileName==fileName){
             return -2;
         }
         file = file->next;
     }
-    file->next = new singlyNode;
-    file = file->next;
-    if(commit==head){
-        file->fileVersion = "00";
-    }
+    file->next = new singlyNode; //Creates new node with the new information
+    file = file->next; //Moves to the new node
     file->fileName = fileName;
-    copy_file(fileName, fileName+file->fileVersion);
+    if(commit==head){ //Checks to see if the commit is the initial commit
+        file->fileVersion = "00";
+    } else{
+        singlyNode *prev = commit->previous->head;
+        while(prev!= nullptr){ //Looks for the file in the previous commit
+            prev = (prev->fileName==file->fileName)?prev: prev->next;
+        }
+        if(isFileUpdated(prev->fileName+prev->fileVersion,file->fileName)){ //Checks to see if the file is different
+            int version = stoi(file->fileVersion);
+            version++; //Updates the version
+            if(file->fileVersion[0]=='0'){
+                file->fileVersion = "0"+to_string(version);
+            } else{
+                file->fileVersion = to_string(version);
+            }
+        }
+    }
+    copy_file(fileName, fileName+file->fileVersion,false); //copys the file to .minigit
+    return 0;
 }
 
 void miniGit::remove_file() // Aria workin on
@@ -91,23 +121,15 @@ miniGit::doublyNode* miniGit::get_current_commit() {
     return commit;
 }
 
-bool isFileUpdated(string previousFile, string newFile){
-    string temp1,temp2;
-    ifstream original(previousFile);
-    ifstream newVersion(newFile);
-    if(!original||!newVersion){
-        return false;
+void miniGit::copy_file(string originalName, string copyName, bool dir) { //Dir bool is to know if the copying is occurring from the .minigit folder to the directory (true)
+    if(dir){
+        string temp = originalName;
+        originalName = ".minigit\\"+copyName;
+        copyName = temp;
+    } else{
+        copyName = ".minigit\\"+copyName;
     }
-    while(getline(newVersion,temp2)||getline(original,temp1)){
-        if(temp1!=temp2){
-            return true;
-        }
-    }
-    return false;
-}
-
-void miniGit::copy_file(string originalName, string copyName) {
-    ofstream copy(".minigit\\"+copyName);
+    ofstream copy(copyName);
     if(!copy){
         cout<<"Failed to open file."<<endl;
         return;
