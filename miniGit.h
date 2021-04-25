@@ -43,7 +43,7 @@ public:
 
     void check_out();
 
-    void copy_file(string originalName, string copyName);
+    void copy_file(string originalName, string copyName, bool dir);
 
 
 
