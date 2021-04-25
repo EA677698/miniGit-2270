@@ -53,8 +53,16 @@ int miniGit::add_file(string fileName) {
     copy_file(fileName, file->fileName);
 }
 
-void miniGit::remove_file() {
+void miniGit::remove_file() // Aria workin on
+{
+    string file = " ";
+    cout << "Enter the name for the soon to be removed file" << endl; //Prompt user to enter a file name.
+    cin >> file >> endl;
+    if( = file) //Check the SLL for whether the file exists in the current version of the repository.
+    {
 
+    }
+    // If found, delete the SLL node.
 }
 
 void miniGit::check_out() {
