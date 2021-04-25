@@ -49,8 +49,8 @@ int miniGit::add_file(string fileName) {
     if(commit==head){
         file->fileVersion = "00";
     }
-    file->fileName = fileName+file->fileVersion;
-    copy_file(fileName, file->fileName);
+    file->fileName = fileName;
+    copy_file(fileName, fileName+file->fileVersion);
 }
 
 void miniGit::remove_file() // Aria workin on
@@ -60,7 +60,7 @@ void miniGit::remove_file() // Aria workin on
 
     string file = " ";
     cout << "Enter the name for the soon to be removed file" << endl; //Prompt user to enter a file name.
-    cin >> file >> endl;
+    cin >> file;
 
     while(ches -> head != NULL)
     {
@@ -87,6 +87,21 @@ miniGit::doublyNode* miniGit::get_current_commit() {
         commit = commit->next;
     }
     return commit;
+}
+
+bool isFileUpdated(string previousFile, string newFile){
+    string temp1,temp2;
+    ifstream original(previousFile);
+    ifstream newVersion(newFile);
+    if(!original||!newVersion){
+        return false;
+    }
+    while(getline(newVersion,temp2)||getline(original,temp1)){
+        if(temp1!=temp2){
+            return true;
+        }
+    }
+    return false;
 }
 
 void miniGit::copy_file(string originalName, string copyName) {

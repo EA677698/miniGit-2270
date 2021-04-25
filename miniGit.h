@@ -46,6 +46,7 @@ public:
     void copy_file(string originalName, string copyName);
 
 
+
 private:
     int currentCommit;
     doublyNode* get_current_commit();
