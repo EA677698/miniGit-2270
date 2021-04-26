@@ -123,31 +123,53 @@ int miniGit::add_file(string fileName) {
     return 0;
 }
 
-void miniGit::remove_file() // Aria workin on
+void miniGit::remove_file(string file) // Aria working on
 {
     doublyNode* ches = get_current_commit();
     singlyNode* temph = ches -> head;
 
-    string file = " ";
-    cout << "Enter the name for the soon to be removed file" << endl; //Prompt user to enter a file name.
-    cin >> file;
-
-    while(temph -> next != NULL)
+    if(head == NULL)
     {
-        singlyNode* temp = temph -> next;
-        if(temph -> next -> fileName == file) //Check the SLL for whether the file exists in the current version of the repository.
+        return;
+    }
+    else
+    {
+        while (temph->next != NULL)
         {
-            temp = temph -> next -> next;
-            delete temph -> next; // delete node
-            temph->next = temp;
-            break;
+            singlyNode *temp = temph->next;
+            if (temph->next->fileName == file) //Check the SLL for whether the file exists in the current version of the repository.
+            {
+                temp = temph->next->next;
+                delete temph->next; // delete node
+                temph->next = temp;
+                break;
+            }
+            temph = temph->next;
         }
-        temph = temph -> next;
+        return;
     }
 }
 
-void miniGit::check_out() {
+void miniGit::check_out(int comnum)
+{
+    doublyNode* ches = get_current_commit();
+    singlyNode* temph = ches -> head;
 
+    if (comnum < ches -> commitNumber)
+    {
+        while (ches != NULL)
+        {
+            if (comnum = ches -> commitNumber)
+            {
+                copy_file( temph -> fileName, temph -> fileName + temph -> fileVersion, true);
+            }
+            else
+            {
+                ches = ches -> previous;
+            }
+        }
+    }
+    return;
 }
 
 miniGit::doublyNode* miniGit::get_current_commit() {
