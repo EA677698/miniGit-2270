@@ -115,16 +115,18 @@ void miniGit::check_out(int comnum)
     doublyNode* ches = get_current_commit();
     singlyNode* temph = ches -> head;
 
-    while(ches != NULL)
+    if (comnum < ches -> commitNumber)
     {
-        if(comnum = ches -> commitNumber)
+        while (ches != NULL)
         {
-            singlyNode *temp = temph->next;
-            if (temph->next->fileName == file) //Check the SLL for whether the file exists in the current version of the repository.
+            if (comnum = ches -> commitNumber)
             {
-
+                copy_file( temph -> fileName, temph -> fileName + temph -> fileVersion, true);
             }
-            temph = temph->next;
+            else
+            {
+                ches = ches -> previous;
+            }
         }
     }
     return;

@@ -39,9 +39,9 @@ public:
 
     int add_file(string fileName);
 
-    void remove_file();
+    void remove_file(string);
 
-    void check_out();
+    void check_out(int);
 
     void copy_file(string originalName, string copyName, bool dir);
 
