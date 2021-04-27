@@ -27,8 +27,19 @@ miniGit::miniGit() {
     fs::create_directory(".minigit");
 }
 
-//TODO: destroy all nodes so that there are no memory leaks
 miniGit::~miniGit() {
+    doublyNode *traverse = get_current_commit();
+    while(traverse != nullptr){
+        traverse = traverse->previous;
+        singlyNode *previous;
+        singlyNode *SSL = traverse->next->head;
+        while(SSL != nullptr){
+            previous = SSL;
+            SSL = SSL->next;
+            delete previous;
+        }
+        delete traverse->next;
+    }
 
 }
 
@@ -40,10 +51,34 @@ void miniGit::initialize() {
 }
 
 void miniGit::commit() {
-
+    singlyNode *traverse = get_current_commit()->head;
+    while(traverse!= nullptr){
+        ifstream temp(".minigit\\"+traverse->fileName+traverse->fileVersion);
+        if(!temp) { //Checks to see if file opened successfully (file found)
+            copy_file(traverse->fileName, traverse->fileName + traverse->fileVersion, false);
+        } else{
+            if(isFileUpdated(traverse->fileName,traverse->fileName+traverse->fileVersion)){ //Checks to see if the original file has been modified
+                copy_file(traverse->fileName, traverse->fileName + traverse->fileVersion, false); //Copies the original file over if it has been modified.
+                int increment = stoi(traverse->fileVersion); //Increments file version
+                increment++;
+                traverse->fileVersion = to_string(increment);
+            }
+        }
+        traverse = traverse->next;
+    }
+    traverse = get_current_commit()->head;
+    get_current_commit()->next = new doublyNode; //Makes new commit
+    currentCommit++;
+    singlyNode *newTraverse = get_current_commit()->head; // Copies original SSL to new commit
+    while(traverse!= nullptr){
+        newTraverse = new singlyNode;
+        newTraverse->fileVersion = traverse->fileVersion;
+        newTraverse->fileName = traverse->fileName;
+        traverse = traverse->next;
+        newTraverse = newTraverse->next;
+    }
 }
 
-//TODO: check to see if a file has changed to update file version number
 int miniGit::add_file(string fileName) {
     if(!fs::exists(fileName)){ //Checks to see if the file exists
         return -1;
@@ -67,9 +102,12 @@ int miniGit::add_file(string fileName) {
     } else{
         singlyNode *prev = commit->previous->head;
         while(prev!= nullptr){ //Looks for the file in the previous commit
-            prev = (prev->fileName==file->fileName)?prev: prev->next;
+            if(prev->fileName==file->fileName){
+                break;
+            }
+            prev = prev->next;
         }
-        if(isFileUpdated(prev->fileName+prev->fileVersion,file->fileName)){ //Checks to see if the file is different
+        if(prev!= nullptr&&isFileUpdated(prev->fileName+prev->fileVersion,file->fileName)){ //Checks to see if the file is different
             int version = stoi(file->fileVersion);
             version++; //Updates the version
             if(file->fileVersion[0]=='0'){
@@ -77,6 +115,8 @@ int miniGit::add_file(string fileName) {
             } else{
                 file->fileVersion = to_string(version);
             }
+        } else{
+            file->fileVersion = "00";
         }
     }
     copy_file(fileName, fileName+file->fileVersion,false); //copys the file to .minigit
