@@ -12,6 +12,7 @@ int main()
 
     int option;
     string inputLine;
+    miniGit git;
 
     bool quit = false;
     while (!quit)
@@ -36,7 +37,7 @@ int main()
         switch(option)
         {
             case 1:
-                initialize();
+                git.initialize();
                 cout << "Created New Repository." << endl;
 
                 break;
@@ -45,7 +46,7 @@ int main()
                 string fileName = " ";
                 cin >> fileName;
 
-                int exist = add_file(fileName);
+                int exist = git.add_file(fileName);
                 while(exist == -1 || exist == -2)
                 {
                     cout << "File already exists, please enter new name" << endl;
@@ -60,20 +61,20 @@ int main()
                 string file = " ";
                 cin >> file;
 
-                remove_file(file);
+                git.remove_file(file);
                 cout << "Your chosen file has been removed." << endl;
                 break;
             case 4:
-                commit();
+                git.commit();
                 cout << "Commit function was implemented." << endl;
                 break;
             case 5:
                 cout << "Before you enter a commit number be warned: you will loose your local changes if you checkout a different version before making a commit with your current local changes." << endl;
                 cout << "Enter commit number: " << endl;
-                double comNum = 0.0;
+                int comNum = 0;
                 cin >> comNum;
 
-                check_out(comNum);
+                git.check_out(comNum);
                 cout << "Successfully checked out." << endl;
                 break;
             case 6:
@@ -82,4 +83,5 @@ int main()
             }
         }
     }
+    return 0;
 }
