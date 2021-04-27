@@ -23,8 +23,6 @@ bool isFileUpdated(string previousFile, string newFile){
 
 miniGit::miniGit() {
     head = nullptr;
-    fs::remove_all(".minigit");
-    fs::create_directory(".minigit");
 }
 
 miniGit::~miniGit() {
@@ -44,16 +42,18 @@ miniGit::~miniGit() {
 }
 
 void miniGit::initialize() {
+    fs::remove_all(".minigit");
+    fs::create_directory(".minigit");
     head = new doublyNode;
     head->commitNumber = 0;
     head->head = new singlyNode;
     currentCommit = 0;
 }
 
-void miniGit::commit() {
+void miniGit::commit() { //TODO: FIX THE FUNCTION, CURRENTLY RECEIVING SEGMENTATION FAULT
     singlyNode *traverse = get_current_commit()->head;
     while(traverse!= nullptr){
-        ifstream temp(".minigit\\"+traverse->fileName+traverse->fileVersion);
+        ifstream temp(".minigit/"+traverse->fileName+traverse->fileVersion);
         if(!temp) { //Checks to see if file opened successfully (file found)
             copy_file(traverse->fileName, traverse->fileName + traverse->fileVersion, false);
         } else{
@@ -79,7 +79,7 @@ void miniGit::commit() {
     }
 }
 
-int miniGit::add_file(string fileName) {
+int miniGit::add_file(string fileName) { // WORKS SUCCESSFULLY EXCEPT FOR: TODO: FIX THE NAMING OF THE COPIED FILE
     if(!fs::exists(fileName)){ //Checks to see if the file exists
         return -1;
     }
@@ -123,7 +123,7 @@ int miniGit::add_file(string fileName) {
     return 0; // Returns 0 if no problems
 }
 
-void miniGit::remove_file(string file)
+void miniGit::remove_file(string file) //TODO: FIX THE FUNCTION
 {
     doublyNode* ches = get_current_commit();
     singlyNode* temph = ches -> head;
@@ -186,10 +186,10 @@ miniGit::doublyNode* miniGit::get_current_commit() {
 void miniGit::copy_file(string originalName, string copyName, bool dir) { //Dir bool is to know if the copying is occurring from the .minigit folder to the directory (true)
     if(dir){
         string temp = originalName;
-        originalName = ".minigit\\"+copyName;
+        originalName = ".minigit/"+copyName;
         copyName = temp;
     } else{
-        copyName = ".minigit\\"+copyName;
+        copyName = ".minigit/"+copyName;
     }
     ofstream copy(copyName);
     if(!copy){
