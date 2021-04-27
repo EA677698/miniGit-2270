@@ -64,7 +64,8 @@ int main()
                 cout << "Your chosen file has been removed." << endl;
                 break;
             case 4:
-
+                commit();
+                cout << "Commit function was implemented." << endl;
                 break;
             case 5:
                 cout << "Before you enter a commit number be warned: you will loose your local changes if you checkout a different version before making a commit with your current local changes." << endl;
