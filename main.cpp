@@ -12,7 +12,11 @@ int main()
 
     int option;
     string inputLine;
+
     miniGit git;
+    string fileName = " ";
+    string file = " ";
+    int comNum = 0;
 
     bool quit = false;
     while (!quit)
@@ -43,7 +47,6 @@ int main()
                 break;
             case 2:
                 cout << "Enter file name you want to add: " << endl;
-                string fileName = " ";
                 cin >> fileName;
 
                 int exist = git.add_file(fileName);
@@ -58,7 +61,6 @@ int main()
                 break;
             case 3:
                 cout << "Enter file name you want to remove: " << endl;
-                string file = " ";
                 cin >> file;
 
                 git.remove_file(file);
@@ -71,7 +73,6 @@ int main()
             case 5:
                 cout << "Before you enter a commit number be warned: you will loose your local changes if you checkout a different version before making a commit with your current local changes." << endl;
                 cout << "Enter commit number: " << endl;
-                int comNum = 0;
                 cin >> comNum;
 
                 git.check_out(comNum);
