@@ -7,9 +7,6 @@ using namespace std;
 
 int main()
 {
-    cout<<stoi("00")<<endl; // do we need this?
-    std::cout << "Hello, World!" << std::endl; // delete? or u like?
-
     int option;
     string inputLine;
 
@@ -39,7 +36,7 @@ int main()
         }
 
         option = stoi(inputLine);
-        switch(option)
+         switch(option)
         {
             case 1:
                 git.initialize();

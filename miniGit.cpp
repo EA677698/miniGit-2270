@@ -4,7 +4,7 @@
 
 #include "miniGit.h"
 #include <fstream>
-#include "main.cpp"
+#include <iostream>
 
 bool isFileUpdated(string previousFile, string newFile){
     string temp1,temp2;
@@ -120,7 +120,7 @@ int miniGit::add_file(string fileName) {
         }
     }
     copy_file(fileName, fileName+file->fileVersion,false); //copys the file to .minigit
-    return 0;
+    return 0; // Returns 0 if no problems
 }
 
 void miniGit::remove_file(string file)
