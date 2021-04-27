@@ -15,7 +15,7 @@ int main()
 
     miniGit git;
     string fileName = " ";
-    int exist = 0;
+    int exist;
     string file = " ";
     int comNum = 0;
 
@@ -56,6 +56,7 @@ int main()
                     cout << "File already exists, please enter new name" << endl;
                     cout << "Enter file name: " << endl;
                     cin >> fileName;
+                    exist = git.add_file(fileName);
                 }
 
                 cout << "File has been successfully added." << endl;
@@ -82,6 +83,7 @@ int main()
             case 6:
             {
                 quit = true;
+                break;
             }
         }
     }
