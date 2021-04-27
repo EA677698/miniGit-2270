@@ -83,7 +83,7 @@ int miniGit::add_file(string fileName) {
     return 0;
 }
 
-void miniGit::remove_file(string file) // Aria working on
+void miniGit::remove_file(string file)
 {
     doublyNode* ches = get_current_commit();
     singlyNode* temph = ches -> head;
