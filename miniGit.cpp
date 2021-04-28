@@ -26,31 +26,32 @@ miniGit::miniGit() {
     head = nullptr;
 }
 
-miniGit::~miniGit() { //TODO: FIX THE FUNCTION
-    doublyNode *traverse = get_current_commit();
-    cout<<"HERE1"<<endl;
-    while(traverse != nullptr){
-        cout<<"HERE2"<<endl;
-        traverse = traverse->previous;
-        cout<<"HERE3"<<endl;
+//Works successfully
+miniGit::~miniGit() {
+    if(head->commitNumber==currentCommit){
+        singlyNode *SSL = head->head;
         singlyNode *previous;
-        if(traverse->next->head){
-            cout<<"HERE3.5"<<endl;
-            singlyNode *SSL = traverse->next->head;
-            cout<<"HERE4"<<endl;
-            while(SSL != nullptr){
-                previous = SSL;
-                SSL = SSL->next;
-                delete previous;
-                cout<<"HERE5"<<endl;
-            }
+        while(SSL != nullptr){
+            previous = SSL;
+            SSL = SSL->next;
+            delete previous;
         }
-        cout<<"HERE345"<<endl;
-        delete traverse->next;
-        cout<<"HERE6"<<endl;
+    } else{
+        doublyNode *traverse = get_current_commit();
+        while(traverse->previous != nullptr){
+            traverse = traverse->previous;
+            singlyNode *previous;
+            if(traverse->next->head){
+                singlyNode *SSL = traverse->next->head;
+                while(SSL != nullptr){
+                    previous = SSL;
+                    SSL = SSL->next;
+                    delete previous;
+                }
+            }
+            delete traverse->next;
+        }
     }
-    cout<<"HERE7"<<endl;
-
 }
 
 //Works successfully
