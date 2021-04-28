@@ -6,18 +6,24 @@
 #include <fstream>
 #include <iostream>
 
-bool isFileUpdated(string previousFile, string newFile){ //TODO: FIX THE FUNCTION
+bool isFileUpdated(string previousFile, string newFile){
     string temp1,temp2;
     ifstream original(previousFile);
     ifstream newVersion(newFile);
     if(!original||!newVersion){
+        original.close();
+        newVersion.close();
         return false;
     }
     while(getline(newVersion,temp2)&&getline(original,temp1)){
         if(temp1!=temp2){
+            original.close();
+            newVersion.close();
             return true;
         }
     }
+    original.close();
+    newVersion.close();
     return false;
 }
 
@@ -26,31 +32,32 @@ miniGit::miniGit() {
     head = nullptr;
 }
 
-miniGit::~miniGit() { //TODO: FIX THE FUNCTION
-    doublyNode *traverse = get_current_commit();
-    cout<<"HERE1"<<endl;
-    while(traverse != nullptr){
-        cout<<"HERE2"<<endl;
-        traverse = traverse->previous;
-        cout<<"HERE3"<<endl;
+//Works successfully
+miniGit::~miniGit() {
+    if(head->commitNumber==currentCommit){
+        singlyNode *SSL = head->head;
         singlyNode *previous;
-        if(traverse->next->head){
-            cout<<"HERE3.5"<<endl;
-            singlyNode *SSL = traverse->next->head;
-            cout<<"HERE4"<<endl;
-            while(SSL != nullptr){
-                previous = SSL;
-                SSL = SSL->next;
-                delete previous;
-                cout<<"HERE5"<<endl;
-            }
+        while(SSL != nullptr){
+            previous = SSL;
+            SSL = SSL->next;
+            delete previous;
         }
-        cout<<"HERE345"<<endl;
-        delete traverse->next;
-        cout<<"HERE6"<<endl;
+    } else{
+        doublyNode *traverse = get_current_commit();
+        while(traverse->previous != nullptr){
+            traverse = traverse->previous;
+            singlyNode *previous;
+            if(traverse->next->head){
+                singlyNode *SSL = traverse->next->head;
+                while(SSL != nullptr){
+                    previous = SSL;
+                    SSL = SSL->next;
+                    delete previous;
+                }
+            }
+            delete traverse->next;
+        }
     }
-    cout<<"HERE7"<<endl;
-
 }
 
 //Works successfully
@@ -113,7 +120,6 @@ int miniGit::add_file(string fileName) { // WORKS SUCCESSFULLY
         file->next = new singlyNode; //Creates new node with the new information
         file = file->next; //Moves to the new node
     } else{
-        cout<<"ACTIVE"<<endl;
         commit->head = new singlyNode;
         file = commit->head;
     }
@@ -128,10 +134,10 @@ int miniGit::add_file(string fileName) { // WORKS SUCCESSFULLY
             }
             prev = prev->next;
         }
-        if(prev!= nullptr&&isFileUpdated(prev->fileName+prev->fileVersion,file->fileName)){ //Checks to see if the file is different
-            int version = stoi(file->fileVersion);
+        if(prev!= nullptr&&isFileUpdated(".minigit/"+prev->fileVersion+prev->fileName,file->fileName)){ //Checks to see if the file is different
+            int version = stoi(prev->fileVersion);
             version++; //Updates the version
-            if(file->fileVersion[0]=='0'){
+            if(prev->fileVersion[0]=='0'){
                 file->fileVersion = "0"+to_string(version);
             } else{
                 file->fileVersion = to_string(version);
@@ -237,11 +243,13 @@ void miniGit::copy_file(string originalName, string copyName, bool dir) { //Dir 
     ofstream copy(copyName);
     if(!copy){
         cout<<"Failed to open file."<<endl;
+        copy.close();
         return;
     }
     ifstream original(originalName);
     if(!original){
         cout<<"Failed to open file."<<endl;
+        original.close();
         return;
     }
     string line;
