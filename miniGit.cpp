@@ -146,20 +146,24 @@ int miniGit::add_file(string fileName) { // WORKS SUCCESSFULLY
 //Works successfully
 void miniGit::remove_file(string file)
 {
-    doublyNode* ches = get_current_commit();
-    singlyNode* temph = ches -> head;
+    doublyNode* ches = get_current_commit(); // We first established the doublyNode pointer to the current commit we were on.
+    singlyNode* temph = ches -> head; // We then made a singlyNode pointer that was initialized to the first file in the current commit.
 
-    if(head == NULL)
+    if(head == NULL) // check to see if commit exists
     {
         return;
     }
     else
     {
-        if(temph->fileName==file){
-            if(temph->next){
-                ches->head = temph->next;
-            } else{
-                get_current_commit()->head = 0;
+        if(temph->fileName==file)
+        { // check to see if file name is found
+            if(temph->next)
+            {
+                ches->head = temph->next; // established the next file to replace head one
+            }
+            else
+            {
+                get_current_commit()->head = 0; //
             }
             delete temph;
             return;
