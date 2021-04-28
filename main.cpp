@@ -10,7 +10,7 @@ int main()
     int option;
     string inputLine;
 
-    miniGit git;
+    miniGit *git = nullptr;
     string fileName = " ";
     int exist;
     string file = " ";
@@ -29,7 +29,7 @@ int main()
 
         getline(cin, inputLine);
 
-        if (inputLine.length() != 1 || inputLine[0] < '0' || inputLine[1] > '6')
+        if (inputLine.length() != 1 || inputLine[0] < '0' || inputLine[1] > '6') //TODO: MAKE IT STOP PRINTING INVALID WHEN IT'S NOT INVALID
         {
             cerr << "Invalid option : " << inputLine << endl;
             continue;
@@ -39,15 +39,23 @@ int main()
          switch(option)
         {
             case 1:
-                git.initialize();
+                if(git){
+                    delete git;
+                }
+                git = new miniGit;
+                git->initialize();
                 cout << "Created New Repository." << endl;
 
                 break;
             case 2:
+                if(!git){
+                    cout<<"Repository not initialized"<<endl;
+                    continue;
+                }
                 cout << "Enter file name you want to add: " << endl;
                 cin >> fileName;
 
-                exist = git.add_file(fileName);
+                exist = git->add_file(fileName);
                 while(exist == -1 || exist == -2)
                 {
                     if(exist == -1){
@@ -57,38 +65,57 @@ int main()
                     }
                     cout << "Enter file name: " << endl;
                     cin >> fileName;
-                    exist = git.add_file(fileName);
+                    exist = git->add_file(fileName);
                 }
 
                 cout << "File has been successfully added." << endl;
+                cout<<"DEBUG, FILES IN COMMIT: "<<endl;
+                git->printFilesInCommit(); //DEBUG
                 break;
             case 3:
+                if(!git){
+                    cout<<"Repository not initialized"<<endl;
+                    continue;
+                }
                 cout << "Enter file name you want to remove: " << endl;
                 cin >> file;
 
-                git.remove_file(file);
+                git->remove_file(file);
                 cout << "Your chosen file has been removed." << endl;
+                cout<<"DEBUG, FILES IN COMMIT: "<<endl;
+                git->printFilesInCommit(); //DEBUG
                 break;
             case 4:
-                git.commit();
+                if(!git){
+                    cout<<"Repository not initialized"<<endl;
+                    continue;
+                }
+                git->commit();
                 cout << "Commit function was implemented." << endl;
+                cout<<"DEBUG, FILES IN COMMIT: "<<endl;
+                git->printFilesInCommit(); //DEBUG
                 break;
             case 5:
+                if(!git){
+                    cout<<"Repository not initialized"<<endl;
+                    continue;
+                }
                 cout << "Before you enter a commit number be warned: you will loose your local changes if you checkout a different version before making a commit with your current local changes." << endl;
                 cout << "Enter commit number: " << endl;
                 cin >> comNum;
 
-                git.check_out(comNum);
+                git->check_out(comNum);
                 cout << "Successfully checked out." << endl;
                 break;
             case 6:
             {
+                if(git){
+                    delete git;
+                }
                 quit = true;
                 break;
             }
         }
-        cout<<"DEBUG, FILES IN COMMIT: "<<endl;
-        git.printFilesInCommit();
     }
     return 0;
 }

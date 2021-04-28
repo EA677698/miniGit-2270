@@ -6,7 +6,7 @@
 #include <fstream>
 #include <iostream>
 
-bool isFileUpdated(string previousFile, string newFile){
+bool isFileUpdated(string previousFile, string newFile){ //TODO: FIX THE FUNCTION
     string temp1,temp2;
     ifstream original(previousFile);
     ifstream newVersion(newFile);
@@ -26,20 +26,30 @@ miniGit::miniGit() {
     head = nullptr;
 }
 
-//Works successfully
-miniGit::~miniGit() {
+miniGit::~miniGit() { //TODO: FIX THE FUNCTION
     doublyNode *traverse = get_current_commit();
+    cout<<"HERE1"<<endl;
     while(traverse != nullptr){
+        cout<<"HERE2"<<endl;
         traverse = traverse->previous;
+        cout<<"HERE3"<<endl;
         singlyNode *previous;
-        singlyNode *SSL = traverse->next->head;
-        while(SSL != nullptr){
-            previous = SSL;
-            SSL = SSL->next;
-            delete previous;
+        if(traverse->next->head){
+            cout<<"HERE3.5"<<endl;
+            singlyNode *SSL = traverse->next->head;
+            cout<<"HERE4"<<endl;
+            while(SSL != nullptr){
+                previous = SSL;
+                SSL = SSL->next;
+                delete previous;
+                cout<<"HERE5"<<endl;
+            }
         }
+        cout<<"HERE345"<<endl;
         delete traverse->next;
+        cout<<"HERE6"<<endl;
     }
+    cout<<"HERE7"<<endl;
 
 }
 
@@ -49,11 +59,10 @@ void miniGit::initialize() {
     fs::create_directory(".minigit");
     head = new doublyNode;
     head->commitNumber = 0;
-    head->head = new singlyNode;
     currentCommit = 0;
 }
 
-void miniGit::commit() { //TODO: FIX THE FUNCTION, CURRENTLY RECEIVING SEGMENTATION FAULT
+void miniGit::commit() { // WORKS SUCCESSFULLY
     singlyNode *traverse = get_current_commit()->head;
     while(traverse!= nullptr){
         ifstream temp(".minigit/"+traverse->fileName+traverse->fileVersion);
@@ -71,10 +80,11 @@ void miniGit::commit() { //TODO: FIX THE FUNCTION, CURRENTLY RECEIVING SEGMENTAT
     }
     traverse = get_current_commit()->head;
     get_current_commit()->next = new doublyNode; //Makes new commit
-    cout<<"Stuck4?"<<endl;
+    get_current_commit()->next->previous = get_current_commit();
+    get_current_commit()->next->commitNumber = currentCommit+1;
     currentCommit++;
+    get_current_commit()->head = nullptr;
     singlyNode *newTraverse = get_current_commit()->head; // Copies original SSL to new commit
-    cout<<"Stuck5?"<<endl;
     while(traverse!= nullptr){
         newTraverse = new singlyNode;
         newTraverse->fileVersion = traverse->fileVersion;
@@ -84,23 +94,29 @@ void miniGit::commit() { //TODO: FIX THE FUNCTION, CURRENTLY RECEIVING SEGMENTAT
     }
 }
 
-int miniGit::add_file(string fileName) { // WORKS SUCCESSFULLY EXCEPT FOR: TODO: FIX THE NAMING OF THE COPIED FILE
+int miniGit::add_file(string fileName) { // WORKS SUCCESSFULLY
     if(!fs::exists(fileName)){ //Checks to see if the file exists
         return -1;
     }
     doublyNode *commit = get_current_commit();
     singlyNode *file = commit->head;
-    if(file->fileName==fileName){ //Checks the head's name
-        return -2;
-    }
-    while(file->next!= nullptr){ //Checks all other names in the list
-        if(file->next->fileName==fileName){
+    if(commit->head){
+        if(file->fileName==fileName){ //Checks the head's name
             return -2;
         }
-        file = file->next;
+        while(file->next!= nullptr){ //Checks all other names in the list
+            if(file->next->fileName==fileName){
+                return -2;
+            }
+            file = file->next;
+        }
+        file->next = new singlyNode; //Creates new node with the new information
+        file = file->next; //Moves to the new node
+    } else{
+        cout<<"ACTIVE"<<endl;
+        commit->head = new singlyNode;
+        file = commit->head;
     }
-    file->next = new singlyNode; //Creates new node with the new information
-    file = file->next; //Moves to the new node
     file->fileName = fileName;
     if(commit==head){ //Checks to see if the commit is the initial commit
         file->fileVersion = "00";
@@ -124,7 +140,6 @@ int miniGit::add_file(string fileName) { // WORKS SUCCESSFULLY EXCEPT FOR: TODO:
             file->fileVersion = "00";
         }
     }
-    //copy_file(fileName, file->fileVersion+fileName,false); //copys the file to .minigit
     return 0; // Returns 0 if no problems
 }
 
@@ -140,6 +155,15 @@ void miniGit::remove_file(string file)
     }
     else
     {
+        if(temph->fileName==file){
+            if(temph->next){
+                ches->head = temph->next;
+            } else{
+                get_current_commit()->head = 0;
+            }
+            delete temph;
+            return;
+        }
         while (temph->next != NULL)
         {
             singlyNode *temp = temph->next;
@@ -156,18 +180,26 @@ void miniGit::remove_file(string file)
     }
 }
 
+//Works successfully
 void miniGit::check_out(int comnum)
 {
     doublyNode* ches = get_current_commit();
-    singlyNode* temph = ches -> head;
-
+    singlyNode* temph;
     if (comnum < ches -> commitNumber)
     {
-        while (ches != NULL)
+        while (ches != nullptr)
         {
+            cout<<ches -> commitNumber<<endl;
             if (comnum == ches -> commitNumber)
             {
-                copy_file( temph -> fileName, temph -> fileName + temph -> fileVersion, true);
+                if(ches->head){
+                    temph = ches->head;
+                    while (temph){
+                        copy_file( temph -> fileName, temph -> fileVersion+temph -> fileName, true);
+                        temph = temph->next;
+                    }
+                }
+                break;
             }
             else
             {
@@ -186,7 +218,6 @@ miniGit::doublyNode* miniGit::get_current_commit() {
         }
         commit = commit->next;
     }
-    cout<<"stuck12"<<endl;
     return commit;
 }
 
@@ -218,6 +249,9 @@ void miniGit::copy_file(string originalName, string copyName, bool dir) { //Dir 
 }
 
 void miniGit::printFilesInCommit() {
+    if(!get_current_commit()->head){
+        return;
+    }
     singlyNode *files = get_current_commit()->head;
     while(files!= nullptr){
         cout<<"File name: "<<files->fileName<<endl;
