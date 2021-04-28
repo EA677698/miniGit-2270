@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iostream>
 
+//Works successfully
 bool isFileUpdated(string previousFile, string newFile){
     string temp1,temp2;
     ifstream original(previousFile);
@@ -69,7 +70,8 @@ void miniGit::initialize() {
     currentCommit = 0;
 }
 
-void miniGit::commit() { // WORKS SUCCESSFULLY
+//Works successfully
+void miniGit::commit() {
     singlyNode *traverse = get_current_commit()->head;
     while(traverse!= nullptr){
         ifstream temp(".minigit/"+traverse->fileName+traverse->fileVersion);
@@ -101,7 +103,8 @@ void miniGit::commit() { // WORKS SUCCESSFULLY
     }
 }
 
-int miniGit::add_file(string fileName) { // WORKS SUCCESSFULLY
+//Works successfully
+int miniGit::add_file(string fileName) {
     if(!fs::exists(fileName)){ //Checks to see if the file exists
         return -1;
     }
@@ -260,6 +263,7 @@ void miniGit::copy_file(string originalName, string copyName, bool dir) { //Dir 
     original.close();
 }
 
+// DEBUG FUNCTION
 void miniGit::printFilesInCommit() {
     if(!get_current_commit()->head){
         return;

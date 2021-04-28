@@ -8,7 +8,6 @@ using namespace std;
 int main()
 {
     int option;
-    //string inputLine;
 
     miniGit *git = nullptr;
     string fileName = " ";
@@ -28,16 +27,7 @@ int main()
         cout << "6. Quit" << endl;
 
         cout << "Enter a number 1-6: " << endl;
-        //getline(cin, inputLine);
         cin >> option;
-        //option = stoi(inputLine);
-
-//        if (inputLine.length() != 1 || inputLine[0] < '0' || inputLine[1] > '6') //TODO: MAKE IT STOP PRINTING INVALID WHEN IT'S NOT INVALID
-//        {
-//            // (inputLine.length() != 1 || inputLine[0] < '0' || inputLine[1] > '6')
-//            cout << "Invalid option : " << inputLine << endl;
-//            //cout << "Invalid option : " << option << endl;
-//        }
         if(option == 1 || option == 2 || option == 3 || option == 4 || option == 5 || option == 6)
         {
             switch (option)
@@ -78,8 +68,6 @@ int main()
                     }
 
                     cout << "File has been successfully added." << endl;
-                    cout << "DEBUG, FILES IN COMMIT: " << endl;
-                    git->printFilesInCommit(); //DEBUG
                     break;
                 case 3:
                     if (!git)
@@ -92,8 +80,6 @@ int main()
 
                     git->remove_file(file);
                     cout << "Your chosen file has been removed." << endl;
-                    cout << "DEBUG, FILES IN COMMIT: " << endl;
-                    git->printFilesInCommit(); //DEBUG
                     break;
                 case 4:
                     if (!git)
@@ -103,8 +89,6 @@ int main()
                     }
                     git->commit();
                     cout << "Commit function was implemented." << endl;
-                    cout << "DEBUG, FILES IN COMMIT: " << endl;
-                    git->printFilesInCommit(); //DEBUG
                     break;
                 case 5:
                     if (!git)
