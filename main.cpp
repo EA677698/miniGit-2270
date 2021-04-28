@@ -27,18 +27,17 @@ int main()
         cout << "5. Checkout" << endl;
         cout << "6. Quit" << endl;
 
-        //getline(cin, inputLine);
         cout << "Enter number: " << endl;
-        cin >> option;
+        getline(cin, inputLine);
+        //cin >> option;
+        option = stoi(inputLine);
 
-        if (option != 1 ||  option != 2 || option != 3 || option != 4 || option != 5 || option != 6) //TODO: MAKE IT STOP PRINTING INVALID WHEN IT'S NOT INVALID
+        if (inputLine.length() != 1 || inputLine[0] < '0' || inputLine[1] > '6') //TODO: MAKE IT STOP PRINTING INVALID WHEN IT'S NOT INVALID
         {
             // (inputLine.length() != 1 || inputLine[0] < '0' || inputLine[1] > '6')
-            //cout << "Invalid option : " << inputLine << endl;
-            cout << "Invalid option : " << option << endl;
-            //continue;
+            cout << "Invalid option : " << inputLine << endl;
+            //cout << "Invalid option : " << option << endl;
         }
-        //option = stoi(inputLine);
         else
         {
             switch (option)
