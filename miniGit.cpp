@@ -6,18 +6,24 @@
 #include <fstream>
 #include <iostream>
 
-bool isFileUpdated(string previousFile, string newFile){ //TODO: FIX THE FUNCTION
+bool isFileUpdated(string previousFile, string newFile){
     string temp1,temp2;
     ifstream original(previousFile);
     ifstream newVersion(newFile);
     if(!original||!newVersion){
+        original.close();
+        newVersion.close();
         return false;
     }
     while(getline(newVersion,temp2)&&getline(original,temp1)){
         if(temp1!=temp2){
+            original.close();
+            newVersion.close();
             return true;
         }
     }
+    original.close();
+    newVersion.close();
     return false;
 }
 
@@ -114,7 +120,6 @@ int miniGit::add_file(string fileName) { // WORKS SUCCESSFULLY
         file->next = new singlyNode; //Creates new node with the new information
         file = file->next; //Moves to the new node
     } else{
-        cout<<"ACTIVE"<<endl;
         commit->head = new singlyNode;
         file = commit->head;
     }
@@ -129,10 +134,10 @@ int miniGit::add_file(string fileName) { // WORKS SUCCESSFULLY
             }
             prev = prev->next;
         }
-        if(prev!= nullptr&&isFileUpdated(prev->fileName+prev->fileVersion,file->fileName)){ //Checks to see if the file is different
-            int version = stoi(file->fileVersion);
+        if(prev!= nullptr&&isFileUpdated(".minigit/"+prev->fileVersion+prev->fileName,file->fileName)){ //Checks to see if the file is different
+            int version = stoi(prev->fileVersion);
             version++; //Updates the version
-            if(file->fileVersion[0]=='0'){
+            if(prev->fileVersion[0]=='0'){
                 file->fileVersion = "0"+to_string(version);
             } else{
                 file->fileVersion = to_string(version);
@@ -234,11 +239,13 @@ void miniGit::copy_file(string originalName, string copyName, bool dir) { //Dir 
     ofstream copy(copyName);
     if(!copy){
         cout<<"Failed to open file."<<endl;
+        copy.close();
         return;
     }
     ifstream original(originalName);
     if(!original){
         cout<<"Failed to open file."<<endl;
+        original.close();
         return;
     }
     string line;
