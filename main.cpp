@@ -8,7 +8,7 @@ using namespace std;
 int main()
 {
     int option;
-    string inputLine;
+    //string inputLine;
 
     miniGit *git = nullptr;
     string fileName = " ";
@@ -27,18 +27,18 @@ int main()
         cout << "5. Checkout" << endl;
         cout << "6. Quit" << endl;
 
-        cout << "Enter number: " << endl;
-        getline(cin, inputLine);
-        //cin >> option;
-        option = stoi(inputLine);
+        cout << "Enter a number 1-6: " << endl;
+        //getline(cin, inputLine);
+        cin >> option;
+        //option = stoi(inputLine);
 
-        if (inputLine.length() != 1 || inputLine[0] < '0' || inputLine[1] > '6') //TODO: MAKE IT STOP PRINTING INVALID WHEN IT'S NOT INVALID
-        {
-            // (inputLine.length() != 1 || inputLine[0] < '0' || inputLine[1] > '6')
-            cout << "Invalid option : " << inputLine << endl;
-            //cout << "Invalid option : " << option << endl;
-        }
-        else
+//        if (inputLine.length() != 1 || inputLine[0] < '0' || inputLine[1] > '6') //TODO: MAKE IT STOP PRINTING INVALID WHEN IT'S NOT INVALID
+//        {
+//            // (inputLine.length() != 1 || inputLine[0] < '0' || inputLine[1] > '6')
+//            cout << "Invalid option : " << inputLine << endl;
+//            //cout << "Invalid option : " << option << endl;
+//        }
+        if(option == 1 || option == 2 || option == 3 || option == 4 || option == 5 || option == 6)
         {
             switch (option)
             {
@@ -131,6 +131,10 @@ int main()
                     break;
                 }
             }
+        }
+        else
+        {
+            cout << "Invalid option : " << option << endl;
         }
     }
     return 0;
