@@ -21,10 +21,12 @@ bool isFileUpdated(string previousFile, string newFile){
     return false;
 }
 
+//Works successfully
 miniGit::miniGit() {
     head = nullptr;
 }
 
+//Works successfully
 miniGit::~miniGit() {
     doublyNode *traverse = get_current_commit();
     while(traverse != nullptr){
@@ -41,6 +43,7 @@ miniGit::~miniGit() {
 
 }
 
+//Works successfully
 void miniGit::initialize() {
     fs::remove_all(".minigit");
     fs::create_directory(".minigit");
@@ -55,10 +58,10 @@ void miniGit::commit() { //TODO: FIX THE FUNCTION, CURRENTLY RECEIVING SEGMENTAT
     while(traverse!= nullptr){
         ifstream temp(".minigit/"+traverse->fileName+traverse->fileVersion);
         if(!temp) { //Checks to see if file opened successfully (file found)
-            copy_file(traverse->fileName, traverse->fileName + traverse->fileVersion, false);
+            copy_file(traverse->fileName, traverse->fileVersion+traverse->fileName, false);
         } else{
             if(isFileUpdated(traverse->fileName,traverse->fileName+traverse->fileVersion)){ //Checks to see if the original file has been modified
-                copy_file(traverse->fileName, traverse->fileName + traverse->fileVersion, false); //Copies the original file over if it has been modified.
+                copy_file(traverse->fileName, traverse->fileVersion+traverse->fileName, false); //Copies the original file over if it has been modified.
                 int increment = stoi(traverse->fileVersion); //Increments file version
                 increment++;
                 traverse->fileVersion = to_string(increment);
@@ -68,8 +71,10 @@ void miniGit::commit() { //TODO: FIX THE FUNCTION, CURRENTLY RECEIVING SEGMENTAT
     }
     traverse = get_current_commit()->head;
     get_current_commit()->next = new doublyNode; //Makes new commit
+    cout<<"Stuck4?"<<endl;
     currentCommit++;
     singlyNode *newTraverse = get_current_commit()->head; // Copies original SSL to new commit
+    cout<<"Stuck5?"<<endl;
     while(traverse!= nullptr){
         newTraverse = new singlyNode;
         newTraverse->fileVersion = traverse->fileVersion;
@@ -119,11 +124,12 @@ int miniGit::add_file(string fileName) { // WORKS SUCCESSFULLY EXCEPT FOR: TODO:
             file->fileVersion = "00";
         }
     }
-    copy_file(fileName, fileName+file->fileVersion,false); //copys the file to .minigit
+    //copy_file(fileName, file->fileVersion+fileName,false); //copys the file to .minigit
     return 0; // Returns 0 if no problems
 }
 
-void miniGit::remove_file(string file) //TODO: FIX THE FUNCTION
+//Works successfully
+void miniGit::remove_file(string file)
 {
     doublyNode* ches = get_current_commit();
     singlyNode* temph = ches -> head;
@@ -159,7 +165,7 @@ void miniGit::check_out(int comnum)
     {
         while (ches != NULL)
         {
-            if (comnum = ches -> commitNumber)
+            if (comnum == ches -> commitNumber)
             {
                 copy_file( temph -> fileName, temph -> fileName + temph -> fileVersion, true);
             }
@@ -169,9 +175,9 @@ void miniGit::check_out(int comnum)
             }
         }
     }
-    return;
 }
 
+//Works successfully
 miniGit::doublyNode* miniGit::get_current_commit() {
     doublyNode *commit = head;
     while(commit != nullptr){
@@ -180,9 +186,11 @@ miniGit::doublyNode* miniGit::get_current_commit() {
         }
         commit = commit->next;
     }
+    cout<<"stuck12"<<endl;
     return commit;
 }
 
+//Works successfully
 void miniGit::copy_file(string originalName, string copyName, bool dir) { //Dir bool is to know if the copying is occurring from the .minigit folder to the directory (true)
     if(dir){
         string temp = originalName;
@@ -207,5 +215,15 @@ void miniGit::copy_file(string originalName, string copyName, bool dir) { //Dir 
     }
     copy.close();
     original.close();
+}
+
+void miniGit::printFilesInCommit() {
+    singlyNode *files = get_current_commit()->head;
+    while(files!= nullptr){
+        cout<<"File name: "<<files->fileName<<endl;
+        cout<<"File version: "<<files->fileVersion<<endl;
+        files = files->next;
+    }
+
 }
 

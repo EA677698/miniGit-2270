@@ -33,6 +33,8 @@ public:
 
     ~miniGit();
 
+    void printFilesInCommit();
+
     void initialize();
 
     void commit();

@@ -50,7 +50,11 @@ int main()
                 exist = git.add_file(fileName);
                 while(exist == -1 || exist == -2)
                 {
-                    cout << "File already exists, please enter new name" << endl;
+                    if(exist == -1){
+                        cout << "The file you are trying to add does not exist. Please enter another name"<<endl;
+                    } else{
+                        cout << "File already exists, please enter new name" << endl;
+                    }
                     cout << "Enter file name: " << endl;
                     cin >> fileName;
                     exist = git.add_file(fileName);
@@ -83,6 +87,8 @@ int main()
                 break;
             }
         }
+        cout<<"DEBUG, FILES IN COMMIT: "<<endl;
+        git.printFilesInCommit();
     }
     return 0;
 }
